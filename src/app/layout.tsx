@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
 
 import "./globals.css";
+import ThemeProvider from "@/context/Theme";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,8 +30,18 @@ const RootLayout = ({ children }: LayoutProps<"/">) => {
     <html
       lang="en"
       className={`${inter.className} ${spaceGrotesk.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <ThemeProvider
+          attribute={"class"}
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 };
