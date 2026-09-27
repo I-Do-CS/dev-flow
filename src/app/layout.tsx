@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
+
+import { auth } from "@/auth";
+import { Toaster } from "@/components/ui/toast";
+import ThemeProvider from "@/context/Theme";
 
 import "./globals.css";
-import ThemeProvider from "@/context/Theme";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,23 +29,28 @@ export const metadata: Metadata = {
   },
 };
 
-const RootLayout = ({ children }: LayoutProps<"/">) => {
+const RootLayout = async ({ children }: LayoutProps<"/">) => {
+  const session = await auth();
+
   return (
     <html
       lang="en"
       className={`${inter.className} ${spaceGrotesk.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
-        <ThemeProvider
-          attribute={"class"}
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
+      <SessionProvider session={session}>
+        <body className="flex min-h-full flex-col">
+          <ThemeProvider
+            attribute={"class"}
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+          <Toaster />
+        </body>
+      </SessionProvider>
     </html>
   );
 };
